@@ -1,8 +1,16 @@
-import 'package:budgetloom/features/onBoarding/presentation/screens/welcome_screen.dart';
+import 'package:budgetloom/features/expense/presentation/provider/expense_provider.dart';
+import 'package:budgetloom/features/expense/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => ExpenseProvider())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,6 +18,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const WelcomeScreen());
+    return MaterialApp(
+      theme: ThemeData(fontFamily: GoogleFonts.mPlusCodeLatin().fontFamily),
+      debugShowCheckedModeBanner: false,
+      home: const HomeScreen(),
+    );
   }
 }
