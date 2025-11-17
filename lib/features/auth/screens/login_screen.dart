@@ -1,0 +1,191 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:budgetloom/features/auth/bloc/auth_bloc.dart';
+import 'package:budgetloom/features/auth/bloc/auth_event.dart';
+import 'package:budgetloom/features/auth/bloc/auth_state.dart';
+import 'package:budgetloom/features/expense/presentation/screens/expense_screen.dart';
+import 'register_screen.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+
+      body: SafeArea(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is Authenticated) {
+              // Close keyboard before navigating
+              FocusScope.of(context).unfocus();
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ExpenseScreen()),
+              );
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Logged in: ${state.userId}")),
+              );
+            }
+
+            if (state is AuthError) {
+              FocusScope.of(context).unfocus();
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+
+          builder: (context, state) {
+            if (state is AuthLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              physics: const BouncingScrollPhysics(),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+
+                    Text(
+                      "Welcome Back",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    Text(
+                      "Login to continue your financial journey.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onBackground.withOpacity(0.7),
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // Email
+                    TextFormField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) => v!.isEmpty ? "Email required" : null,
+                      decoration: InputDecoration(
+                        labelText: "Email",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Password
+                    TextFormField(
+                      controller: passwordController,
+                      obscureText: true,
+                      validator: (v) => v!.isEmpty ? "Password required" : null,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Login Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (!formKey.currentState!.validate()) return;
+
+                          context.read<AuthBloc>().add(
+                            LoginEvent(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onBackground.withOpacity(0.7),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RegisterScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text("Create Account"),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
