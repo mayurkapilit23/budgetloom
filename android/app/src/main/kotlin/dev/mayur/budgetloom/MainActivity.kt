@@ -1,4 +1,4 @@
-package com.devmayur.budgetloom
+package dev.mayur.budgetloom
 
 import io.flutter.embedding.android.FlutterActivity
 

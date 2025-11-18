@@ -4,14 +4,15 @@ import 'package:budgetloom/features/auth/repositories/firebase_auth_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial()) {
+  final FirebaseAuthRepo firebaseAuthRepo;
+  AuthBloc(this.firebaseAuthRepo) : super(AuthInitial()) {
     // on<CheckAuthEvent>((event, emit) {
     //   emit(Authenticated());
     // });
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
       await Future.delayed(const Duration(seconds: 1));
-      final userCredential = FirebaseAuthRepo.signInWithEmailAndPassword(
+      final userCredential = firebaseAuthRepo.signInWithEmailAndPassword(
         event.email,
         event.password,
       );
@@ -26,12 +27,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterEvent>((event, emit) async {
       emit(AuthLoading());
       await Future.delayed(const Duration(seconds: 1));
-      FirebaseAuthRepo.registerWithEmailAndPassword(
+      final userCredential = firebaseAuthRepo.registerWithEmailAndPassword(
         event.email,
         event.password,
       );
 
-      emit(Authenticated(userId: 'some_user_id'));
+      // Get the UID
+      final uid = await userCredential;
+
+      emit(Authenticated(userId: uid ?? 'unknown_user'));
       emit(AuthInitial());
     });
   }

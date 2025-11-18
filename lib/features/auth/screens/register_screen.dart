@@ -1,8 +1,12 @@
+import 'package:budgetloom/features/auth/bloc/auth_bloc.dart';
+import 'package:budgetloom/features/auth/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:budgetloom/features/auth/bloc/auth_bloc.dart';
-import 'package:budgetloom/features/auth/bloc/auth_event.dart';
-import 'package:budgetloom/features/auth/bloc/auth_state.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../../../core/utils/app_color.dart';
+import '../../../core/widgets/custom_button.dart';
+import '../bloc/auth_event.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -54,7 +58,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           builder: (context, state) {
             if (state is AuthLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: LoadingAnimationWidget.fourRotatingDots(
+                  color: Colors.indigoAccent.shade200,
+                  size: 30,
+                ),
+              );
             }
 
             return SingleChildScrollView(
@@ -137,37 +146,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 30),
 
                     // Register Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (!formKey.currentState!.validate()) return;
+                    CustomButton(
+                      backgroundColor: AppColor.primaryFocusedColor,
+                      text: 'Sign Up',
+                      onPressed: () {
+                        if (!formKey.currentState!.validate()) return;
 
-                          context.read<AuthBloc>().add(
-                            RegisterEvent(
-                              email: emailController.text.trim(),
-                              password: passwordController.text.trim(),
-                            ),
-                          );
+                        context.read<AuthBloc>().add(
+                          RegisterEvent(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                          ),
+                        );
 
-                          emailController.clear();
-                          passwordController.clear();
-                          nameController.clear();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                        emailController.clear();
+                        passwordController.clear();
+                        nameController.clear();
+                      },
                     ),
 
                     const SizedBox(height: 30),
