@@ -1,73 +1,115 @@
+import 'package:budgetloom/features/transcations/bloc/transaction_bloc.dart';
+import 'package:budgetloom/features/transcations/data/repo/transaction_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/transaction_event.dart';
+import '../bloc/transaction_state.dart';
 
 class TransactionsScreen extends StatelessWidget {
   const TransactionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFBFBFE),
-      // appBar: _buildAppBar(),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return BlocProvider(
+      create: (context) => DataBloc(ApiRepository())..add(LoadDataRequested()),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFBFBFE),
+        body: SafeArea(
+          child: BlocBuilder<DataBloc, DataState>(
+            builder: (context, state) {
+              if (state is DataLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is DataLoaded) {
+                final transactions = state.allExpensesResponse.data;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSearchBar(),
+                    _buildFilterChips(),
+                    _buildDateHeader("TODAY"),
 
-            _buildSearchBar(),
-            _buildFilterChips(),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  _buildDateHeader("TODAY"),
-                  _buildTransactionTile(
-                    "Blue Bottle Coffee",
-                    "10:45 AM • Dining",
-                    "-\$12.50",
-                    Icons.restaurant,
-                    const Color(0xFFECECFF),
-                    Colors.redAccent,
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: transactions!.length,
+                        itemBuilder: (context, index) {
+                          return _buildTransactionTile(
+                            transactions![index].title!,
+                            transactions[index].createdAt!,
+                            transactions[index].amount!,
+                            Icons.restaurant,
+                            const Color(0xFFECECFF),
+                            Colors.redAccent,
+                          );
+                        },
+                      ),
+                    ),
+
+                    //
+                    // Expanded(
+                    //   child: ListView(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //     children: [
+                    //       _buildTransactionTile(
+                    //         "Blue Bottle Coffee",
+                    //         "10:45 AM • Dining",
+                    //         "-\$12.50",
+                    //         Icons.restaurant,
+                    //         const Color(0xFFECECFF),
+                    //         Colors.redAccent,
+                    //       ),
+                    //       _buildTransactionTile(
+                    //         "Apple Store",
+                    //         "09:15 AM • Tech",
+                    //         "-\$1,299.00",
+                    //         Icons.shopping_bag,
+                    //         const Color(0xFFE2FBE5),
+                    //         Colors.redAccent,
+                    //       ),
+                    //
+                    //       _buildDateHeader("YESTERDAY"),
+                    //       _buildTransactionTile(
+                    //         "Metropolitan Transit",
+                    //         "06:20 PM • Travel",
+                    //         "-\$4.50",
+                    //         Icons.directions_bus,
+                    //         const Color(0xFFFFEAEA),
+                    //         Colors.redAccent,
+                    //       ),
+                    //       _buildTransactionTile(
+                    //         "Dividend Payout",
+                    //         "01:00 PM • Investment",
+                    //         "+\$420.00",
+                    //         Icons.account_balance_wallet,
+                    //         const Color(0xFFE2FBE5),
+                    //         Colors.green,
+                    //       ),
+                    //
+                    //       _buildDateHeader("NOV 14, 2023"),
+                    //       _buildTransactionTile(
+                    //         "Monthly Rent",
+                    //         "08:00 AM • Housing",
+                    //         "-\$2,850.00",
+                    //         Icons.home,
+                    //         const Color(0xFFF2F2F2),
+                    //         Colors.redAccent,
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                  ],
+                );
+              } else if (state is DataError) {
+                return Center(
+                  child: Text(
+                    state.error,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                  _buildTransactionTile(
-                    "Apple Store",
-                    "09:15 AM • Tech",
-                    "-\$1,299.00",
-                    Icons.shopping_bag,
-                    const Color(0xFFE2FBE5),
-                    Colors.redAccent,
-                  ),
-        
-                  _buildDateHeader("YESTERDAY"),
-                  _buildTransactionTile(
-                    "Metropolitan Transit",
-                    "06:20 PM • Travel",
-                    "-\$4.50",
-                    Icons.directions_bus,
-                    const Color(0xFFFFEAEA),
-                    Colors.redAccent,
-                  ),
-                  _buildTransactionTile(
-                    "Dividend Payout",
-                    "01:00 PM • Investment",
-                    "+\$420.00",
-                    Icons.account_balance_wallet,
-                    const Color(0xFFE2FBE5),
-                    Colors.green,
-                  ),
-        
-                  _buildDateHeader("NOV 14, 2023"),
-                  _buildTransactionTile(
-                    "Monthly Rent",
-                    "08:00 AM • Housing",
-                    "-\$2,850.00",
-                    Icons.home,
-                    const Color(0xFFF2F2F2),
-                    Colors.redAccent,
-                  ),
-                ],
-              ),
-            ),
-          ],
+                );
+              }
+              return const Center(child: Text("Press button to fetch"));
+            },
+          ),
         ),
       ),
     );
@@ -221,27 +263,6 @@ class TransactionsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return BottomNavigationBar(
-      currentIndex: 1,
-      selectedItemColor: const Color(0xFF2D2E8B),
-      unselectedItemColor: Colors.grey,
-      type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "HOME"),
-        BottomNavigationBarItem(icon: Icon(Icons.analytics), label: "INSIGHTS"),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline),
-          label: "ADD",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: "PROFILE",
-        ),
-      ],
     );
   }
 }
