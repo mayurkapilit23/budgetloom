@@ -6,7 +6,7 @@ class CustomExpenseContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       height: MediaQuery.of(context).size.height * 0.25,
       // width: double.infinity,
       width: MediaQuery.of(context).size.height * 0.2,
@@ -18,13 +18,13 @@ class CustomExpenseContainer extends StatelessWidget {
             color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
             spreadRadius: 1,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 5,
             spreadRadius: 0,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -35,13 +35,13 @@ class CustomExpenseContainer extends StatelessWidget {
             children: [
               Text(
                 "Budget for ${DateTime.now().month}",
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
 
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
+              const Text(
                 '10000',
                 style: TextStyle(
                   color: Colors.white,
@@ -54,7 +54,7 @@ class CustomExpenseContainer extends StatelessWidget {
 
           ElevatedButton(
             onPressed: () => _opensUpdateBudget(context),
-            child: Text(
+            child: const Text(
               'Update Budget',
               style: TextStyle(
                 color: Colors.black,
@@ -73,18 +73,18 @@ class CustomExpenseContainer extends StatelessWidget {
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           height: MediaQuery.of(context).size.height * 0.5,
 
           child: Column(
             children: [
-              Center(child: Text('set your monthly Budget ')),
-              TextField(keyboardType: TextInputType.numberWithOptions()),
+              const Center(child: Text('set your monthly Budget ')),
+              const TextField(keyboardType: TextInputType.numberWithOptions()),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text(
+                child: const Text(
                   'Save Budget',
                   style: TextStyle(
                     color: Colors.black,

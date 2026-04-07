@@ -1,184 +1,139 @@
-import 'package:budgetloom/features/auth/bloc/auth_bloc.dart';
-import 'package:budgetloom/features/auth/bloc/auth_state.dart';
-import 'package:budgetloom/features/expense/presentation/screens/expense_screen.dart';
+import 'package:budgetloom/features/auth/screens/register_screen.dart';
+import 'package:budgetloom/features/expense/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../core/utils/app_color.dart';
-import '../../../core/widgets/custom_button.dart';
-import '../bloc/auth_event.dart';
-import 'register_screen.dart';
-
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is Authenticated) {
-              // Close keyboard before navigating
-              FocusScope.of(context).unfocus();
-
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const ExpenseScreen()),
-              );
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Logged in: ${state.userId}")),
-              );
-            }
-
-            if (state is AuthError) {
-              FocusScope.of(context).unfocus();
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
-            }
-          },
-
-          builder: (context, state) {
-            if (state is AuthLoading) {
-              return Center(
-                child: LoadingAnimationWidget.fourRotatingDots(
-                  color: Colors.indigoAccent.shade200,
-                  size: 30,
-                ),
-              );
-            }
-
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              physics: const BouncingScrollPhysics(),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                // Logo Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
-
+                    Icon(Icons.shield, color: Colors.blue[900], size: 28),
+                    const SizedBox(width: 8),
                     Text(
-                      "Welcome Back",
+                      'BudgetLoom',
                       style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: Colors.blue[900],
                       ),
                     ),
-                    const SizedBox(height: 8),
-
-                    Text(
-                      "Login to continue your financial journey.",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onBackground.withOpacity(0.7),
-                      ),
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // Email
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) => v!.isEmpty ? "Email required" : null,
-                      decoration: InputDecoration(
-                        labelText: "Email",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Password
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      validator: (v) => v!.isEmpty ? "Password required" : null,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // Login Button
-                    CustomButton(
-                      backgroundColor: AppColor.primaryFocusedColor,
-                      text: 'Login',
-                      onPressed: () {
-                        if (!formKey.currentState!.validate()) return;
-
-                        context.read<AuthBloc>().add(
-                          LoginEvent(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account?",
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onBackground.withOpacity(0.7),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => RegisterScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text("Create Account"),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
                   ],
                 ),
-              ),
+                // const Spacer(flex: 1),
+                // Welcome Text
+                const Text(
+                  'Welcome Back',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Continue your journey into financial clarity.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                ),
+                const SizedBox(height: 40),
+                // Input Fields
+                const CustomTextField(hint: 'Email Address'),
+                const SizedBox(height: 16),
+                const CustomTextField(hint: 'Password', isPassword: true),
+
+                // Forgot Password
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const SizedBox(height: 20),
+                // Login Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton.icon(
+                    onPressed: () {  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    );},
+                    icon: const Icon(Icons.lock, size: 18, color: Colors.white),
+                    label: const Text(
+                      'Secure Login',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10197E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Register Button
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterScreen()),
             );
           },
+          child: const Text("Don't have an account? Register"),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomTextField extends StatelessWidget {
+  final String hint;
+  final bool isPassword;
+
+  const CustomTextField({
+    super.key,
+    required this.hint,
+    this.isPassword = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: TextEditingController(),
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
       ),
     );

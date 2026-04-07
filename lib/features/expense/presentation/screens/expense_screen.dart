@@ -1,5 +1,4 @@
 import 'package:budgetloom/features/expense/presentation/widgets/custom_expense_container.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseScreen extends StatelessWidget {
@@ -8,18 +7,21 @@ class ExpenseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: const SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [CustomExpenseContainer(), CustomExpenseContainer()],
-              ),
-              SizedBox(height: 30),
-              Text('data'),
-            ],
+          padding: EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomExpenseContainer(),
+                    CustomExpenseContainer(),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -27,7 +29,7 @@ class ExpenseScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         onPressed: () {},
-        child: Icon(EvaIcons.plus, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

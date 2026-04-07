@@ -1,9 +1,6 @@
-import 'dart:developer';
-
+import 'package:budgetloom/core/constants/app_logger.dart';
 import 'package:budgetloom/core/constants/constant.dart';
 import 'package:budgetloom/core/widgets/custom_button.dart';
-import 'package:budgetloom/features/auth/repositories/firebase_auth_repo.dart'
-    show FirebaseAuthRepo;
 import 'package:budgetloom/features/auth/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,12 +50,12 @@ class WelcomeScreen extends StatelessWidget {
 
               // Login Button
               CustomButton(
-                backgroundColor: AppColor.primaryFocusedColor,
+                backgroundColor: AppColors.primaryFocusedColor,
                 text: 'Login',
                 onPressed: () {
                   final firebaseAuth = FirebaseAuth.instance.currentUser;
-                  print('Logged in user:  ${firebaseAuth?.uid}');
-                  navigateTo(context, LoginScreen());
+                  AppLogger.instance.d("Logged in user: ${firebaseAuth?.uid}");
+                  navigateTo(context, const LoginScreen());
                 },
               ),
 
@@ -70,19 +67,13 @@ class WelcomeScreen extends StatelessWidget {
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: BorderSide(color: Colors.black, width: 1.5),
+                    side: const BorderSide(color: Colors.black, width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  onPressed: () {
-                    final firebaseAuth = FirebaseAuth.instance.signOut();
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (_) => RegisterScreen()),
-                    // );
-                  },
-                  child: Text(
+                  onPressed: () {},
+                  child: const Text(
                     "Create Account",
                     style: TextStyle(
                       fontSize: 18,
@@ -94,7 +85,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
-              Align(alignment: Alignment.center, child: Text('or')),
+              const Align(alignment: Alignment.center, child: Text('or')),
               const SizedBox(height: 20),
 
               SizedBox(
@@ -108,11 +99,7 @@ class WelcomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  onPressed: () async {
-                    final fia = FirebaseAuthRepo();
-                    final user = await fia.signInWithGoogle();
-                    log("User:  ${user?.displayName}");
-                  },
+                  onPressed: () async {},
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

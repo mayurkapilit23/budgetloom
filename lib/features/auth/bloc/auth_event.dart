@@ -32,7 +32,3 @@ class CheckAuthEvent extends AuthEvent {
   List<Object?> get props => [];
 }
 
-class GoogleLoginEvent extends AuthEvent {
-  @override
-  List<Object?> get props => [];
-}

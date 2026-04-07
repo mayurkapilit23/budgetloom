@@ -1,47 +1,68 @@
-// import 'package:budgetloom/features/expense/presentation/provider/expense_provider.dart';
-// import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+import 'package:budgetloom/features/profile/presentation/screens/profile_screen.dart';
+import 'package:flutter/material.dart';
 
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
+import '../../../../core/utils/app_color.dart';
+import '../../../dashboard/screens/dashboard_screen.dart';
+import '../../../insights/screens/insights_screen.dart';
+import '../../../transcations/screens/transactions_screen.dart';
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final eProvider = Provider.of<ExpenseProvider>(context);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-//     return Scaffold(
-//       body: eProvider.screens[eProvider.selectedIndex],
-//       bottomNavigationBar: BottomNavigationBar(
-//         type: BottomNavigationBarType.fixed,
-//         // no shifting animation
-//         currentIndex: eProvider.selectedIndex,
-//         onTap: eProvider.onItemTapped,
-//         elevation: 0,
-//         selectedItemColor: Colors.black,
-//         unselectedItemColor: Colors.grey,
-//         showSelectedLabels: false,
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-//         showUnselectedLabels: false,
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
 
-//         items: const [
-//           BottomNavigationBarItem(
-//             icon: Icon(EvaIcons.homeOutline),
-//             activeIcon: Icon(EvaIcons.home),
-//             label: "Home",
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(EvaIcons.infoOutline),
-//             activeIcon: Icon(EvaIcons.info),
-//             label: "Calender",
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(EvaIcons.personOutline),
-//             activeIcon: Icon(EvaIcons.person),
-//             label: "Profile",
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  final List<Widget> _screens = [
+    const DashboardScreen(),
+    const TransactionsScreen(),
+    const InsightsScreen(),
+    const ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: IndexedStack(index: _currentIndex, children: _screens),
+
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() => _currentIndex = index);
+        },
+
+        height: 72,
+        backgroundColor: Colors.white,
+        indicatorColor: AppColors.primary.withOpacity(0.15),
+
+        destinations: [
+          const NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard, color: AppColors.primary),
+            label: 'Dashboard',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.history_outlined),
+            selectedIcon: Icon(Icons.history, color: AppColors.primary),
+            label: 'Transactions',
+          ),
+
+          const NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart, color: AppColors.primary),
+            label: 'Analytics',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person, color: AppColors.primary),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+}
